@@ -9,16 +9,17 @@ const RULES: readonly [Rule, string][] = [
   ['config', 'Configs WP/PS'],
   ['env', '.env.local'],
   ['creds', 'Identifiants'],
-  ['destructive', 'Contournement git'],
+  ['bypass', 'Contournement git'],
   ['web', 'Web hors liste'],
   ['sql', 'SQL'],
   ['logs', 'Logs'],
 ]
 const DEFAULTS: Toggles = {
-  attribution: true, config: true, env: true, creds: true, destructive: true, web: false, sql: false, logs: false,
+  attribution: true, config: true, env: true, creds: true, bypass: true, web: false, sql: false, logs: false,
 }
 const toggles = atom({ plugin: 'seculaud-band', key: 'toggles' } as const, DEFAULTS)
 const open = atom({ plugin: 'seculaud-band', key: 'open' } as const, false)
+const safetyNet = atom({ plugin: 'seculaud-band', key: 'safetyNet' } as const, false)
 
 const parse = (text: string): Toggles => {
   const out = { ...DEFAULTS }
@@ -46,6 +47,10 @@ export const register: Register = on => {
     // Fichier absent ou illisible : valeurs par défaut, comme conf.sh.
     const text = await $.fs.read(path).catch(() => '')
     await update($, toggles, () => parse(text))
+    // shortcut: cherche « safety-net » dans les réglages et plugins installés ; à revoir si cc-safety-net change sa façon de s'installer.
+    const home = `${await $.env.get('HOME')}/.claude`
+    const found = await Promise.all(['settings.json', 'plugins/installed_plugins.json'].map(f => $.fs.read(`${home}/${f}`).catch(() => '')))
+    await update($, safetyNet, () => found.some(f => f.includes('safety-net')))
     return next(e)
   })
 
@@ -53,6 +58,7 @@ export const register: Register = on => {
     if (e.props.hasSurvey) return next(e)
     const t = await read($, toggles)
     const isOpen = await read($, open)
+    const sn = await read($, safetyNet)
     const { Box, Button, Text } = $.ui.resolve(e)
     const flip = async (k: Rule) => {
       let saved = t
@@ -69,6 +75,7 @@ export const register: Register = on => {
           <Text dimColor>🔒 seculaud </Text>
           <Text>{RULES.length - off.length}/{RULES.length} actives</Text>
           {!isOpen && off.length > 0 && <Text dimColor> · off : {off.join(', ')}</Text>}
+          <Text dimColor> · </Text><Text>{sn ? '🟢' : '🟠'}</Text><Text dimColor> safety-net{sn ? '' : ' absent'}</Text>
           <Text> </Text>
           <Button hotkey="0" onPress={() => update($, open, o => !o)}>{isOpen ? '▾ réduire' : '▸ régler'}</Button>
         </Box>

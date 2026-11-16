@@ -78,7 +78,7 @@ check 0 $g '{"tool_name":"Grep","cwd":"'"$t/site"'","tool_input":{"pattern":"DB_
 out=$(printf '%s' '{"tool_name":"Grep","cwd":"'"$t/site"'","tool_input":{"pattern":"DB_","type":"php"}}' | bash "$h/$g")
 case "$out" in *'"updatedInput"'*'"glob":"!{wp-config.php,'*'"type":"php"'*|*'"updatedInput"'*'"type":"php"'*'"glob":"!{wp-config.php,'*) ;; *) echo "ÉCHEC Grep exclusion : $out"; fail=1;; esac
 # commandes destructrices / contournements git
-k=guard-destructive.sh
+k=guard-bypass.sh
 check 2 $k '{"tool_input":{"command":"git commit --no-verify -m x"}}'
 check 2 $k '{"tool_input":{"command":"git commit -nm x"}}'
 check 2 $k '{"tool_input":{"command":"git push --no-verify"}}'
@@ -88,7 +88,7 @@ check 0 $k '{"tool_input":{"command":"git add -A && git commit -m \"fix\""}}'
 check 0 $k '{"tool_input":{"command":"git push -f"}}'  # laissé à cc-safety-net
 grep -q "no-verify" "$SECULAUD_LOG" || { echo "ÉCHEC journal d'audit vide"; fail=1; }
 printf 'creds=off\n' > "$SECULAUD_CONF"; check 0 $g '{"tool_input":{"command":"cat ~/.ssh/id_ed25519"}}'; rm "$SECULAUD_CONF"
-printf 'destructive=off\n' > "$SECULAUD_CONF"; check 0 $k '{"tool_input":{"command":"git commit --no-verify -m x"}}'; rm "$SECULAUD_CONF"
+printf 'bypass=off\n' > "$SECULAUD_CONF"; check 0 $k '{"tool_input":{"command":"git commit --no-verify -m x"}}'; rm "$SECULAUD_CONF"
 # WebFetch (règle off par défaut)
 [ -z "$(printf '%s' '{"tool_input":{"url":"https://evil.io/x"}}' | bash "$h/guard-web.sh")" ] || { echo "ÉCHEC web : actif par défaut"; fail=1; }
 printf 'web=on\nweb_allow=wordpress.org, php.net\n' > "$SECULAUD_CONF"

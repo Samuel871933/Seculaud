@@ -14,7 +14,7 @@
         "matcher": "Bash",
         "hooks": [
           { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-attribution.sh\"", "timeout": 5 },
-          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-destructive.sh\"", "timeout": 5 }
+          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-bypass.sh\"", "timeout": 5 }
         ]
       },
       {

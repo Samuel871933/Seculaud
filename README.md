@@ -8,7 +8,7 @@ Garde-fous de sécurité pour l'utilisation de Claude Code dans l'équipe.
 | `.env.local` illisible | même hook : `.env.local`, `.env.*.local`, `.env.local.php`, globs `.env*` (Read, Grep, Bash, Edit, Write) |
 | Identifiants de la machine illisibles | même hook : `~/.ssh/`, `id_rsa`/`id_ed25519`…, `*.pem`, `*.key`, `*.p12`, `~/.aws/`, `.git-credentials`, `.netrc`, `.npmrc`, `.pypirc`, `~/.docker/config.json`, `~/.kube/config`, `~/.config/gcloud/`, `~/.config/gh/`, `~/.gnupg/` |
 | Recherches récursives sans fuite | `grep -r` et `rg` (Bash) reçoivent automatiquement `--exclude=…` / `-g '!…'` pour les fichiers ci-dessus ; idem pour l'outil Grep (glob d'exclusion). `xargs`, `find -exec`, `ag`, `ack` : bloqués si le dossier courant contient un fichier sensible. Nécessite `jq` |
-| Pas de contournement git | hook `guard-destructive.sh` (Bash) : `--no-verify`, `git commit -n`, `git add -f`, y compris dans `bash -c '…'` |
+| Pas de contournement git | hook `guard-bypass.sh` (Bash) : `--no-verify`, `git commit -n`, `git add -f`, y compris dans `bash -c '…'` |
 | Pas de commande qui efface du travail | délégué à [cc-safety-net](https://github.com/kenryu42/claude-code-safety-net) (voir Installation) : `git reset --hard`, `push --force`, `clean -f`, `checkout -- .`, `branch -D`, `stash drop`, `rm -rf`… |
 | Pas d'attribution Claude dans les commits, tags et PR | hook `guard-attribution.sh` (refuse `Co-Authored-By: Claude…` et « Generated with Claude Code » dans `git`/`gh`) + réglage `attribution` de `settings.json` (voir Installation) + consigne du skill |
 | WebFetch sous contrôle | hook `guard-web.sh` : confirmation demandée pour tout domaine hors `web_allow=` (règle `web`, off par défaut) |
@@ -28,7 +28,7 @@ Chaque règle s'active ou se désactive dans `~/.claude/seculaud.conf` (une lign
 | `env` | on | `.env.local` et variantes |
 | `creds` | on | clés SSH, certificats, identifiants cloud/registres de la machine |
 | `attribution` | on | Co-auteur / « Generated with Claude » dans git/gh |
-| `destructive` | on | `--no-verify`, `git add -f` |
+| `bypass` | on | `--no-verify`, `git commit -n`, `git add -f` (pas `reset --hard`, `rm -rf`… : voir cc-safety-net) |
 | `web` | off | WebFetch hors `web_allow` (demande confirmation) |
 | `sql` | off | dumps `*.sql*` (hors `modules/*/sql/`), `backups/`, `updraft/`, `ai1wm-backups/` |
 | `logs` | off | `*.log`, `var/logs/`, `log/` |
@@ -55,7 +55,7 @@ Le changement s'applique à l'appel d'outil suivant.
 
 ### À lancer une fois par poste
 
-Commandes qui effacent du travail (git, `rm -rf`) : [cc-safety-net](https://github.com/kenryu42/claude-code-safety-net) (MIT, Node.js 22+).
+Commandes qui effacent du travail (git, `rm -rf`) : [cc-safety-net](https://github.com/kenryu42/claude-code-safety-net) (MIT, Node.js 22+). Sans lui, rien ne les bloque : le band affiche alors une pastille 🟠 `safety-net absent`.
 
 ```
 npx -y cc-safety-net@latest install
