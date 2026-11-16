@@ -75,7 +75,6 @@ export const register: Register = on => {
           <Text dimColor>🔒 seculaud </Text>
           <Text>{RULES.length - off.length}/{RULES.length} actives</Text>
           {!isOpen && off.length > 0 && <Text dimColor> · off : {off.join(', ')}</Text>}
-          <Text dimColor> · </Text><Text>{sn ? '🟢' : '🟠'}</Text><Text dimColor> safety-net{sn ? '' : ' absent'}</Text>
           <Text> </Text>
           <Button hotkey="0" onPress={() => update($, open, o => !o)}>{isOpen ? '▾ réduire' : '▸ régler'}</Button>
         </Box>
@@ -88,6 +87,11 @@ export const register: Register = on => {
                 <Button hotkey={'12345678'.charAt(i)} onPress={() => flip(k)}>{label}</Button>
               </Box>
             ))}
+            {/* Pas un interrupteur : seculaud ne fait que constater si cc-safety-net est installé. */}
+            <Box>
+              <Text> {sn ? '🟢' : '🟠'}</Text>
+              <Text> Commandes destructrices{sn ? '' : ' (cc-safety-net absent)'}</Text>
+            </Box>
           </Box>
         )}
       </Box>

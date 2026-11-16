@@ -55,7 +55,7 @@ Le changement s'applique à l'appel d'outil suivant.
 
 ### À lancer une fois par poste
 
-Commandes qui effacent du travail (git, `rm -rf`) : [cc-safety-net](https://github.com/kenryu42/claude-code-safety-net) (MIT, Node.js 22+). Sans lui, rien ne les bloque : le band affiche alors une pastille 🟠 `safety-net absent`.
+Commandes qui effacent du travail (git, `rm -rf`) : [cc-safety-net](https://github.com/kenryu42/claude-code-safety-net) (MIT, Node.js 22+). Sans lui, rien ne les bloque : dans le band, la pastille « Commandes destructrices » est alors 🟠.
 
 ```
 npx -y cc-safety-net@latest install
