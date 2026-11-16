@@ -1,0 +1,17 @@
+# état local des outils
+.swarmod/
+**/.swarmod/
+
+# secrets (au cas où)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# divers
+node_modules/
+.DS_Store
+*.log
+.vscode/
+.idea/

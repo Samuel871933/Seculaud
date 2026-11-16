@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "seculaud",
+  "description": "Garde-fous sécurité Claude Code.",
+  "owner": {
+    "name": "Samuel R",
+    "url": "https://github.com/Samuel871933"
+  },
+  "plugins": [
+    {
+      "name": "seculaud",
+      "description": "Bloque la lecture des secrets (WordPress, PrestaShop, .env.local) et l'attribution Claude dans les commits.",
+      "source": "./",
+      "category": "security"
+    },
+    {
+      "name": "seculaud-band",
+      "description": "Interrupteurs des règles seculaud au-dessus du prompt (Claude Code récent).",
+      "source": "./mod",
+      "category": "security"
+    }
+  ]
+}

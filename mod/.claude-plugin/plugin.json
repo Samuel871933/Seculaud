@@ -1,0 +1,1 @@
+{ "name": "seculaud-band", "version": "0.3.0", "description": "Interrupteurs des règles seculaud au-dessus du prompt.", "license": "MIT", "types": "./types/index.d.ts" }
